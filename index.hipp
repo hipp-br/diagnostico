@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Onde começar com IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Coluna única, blocos separados por cartão, resultado como laudo. Identidade HIPP, tema escuro. */
+:root{
+  --bg:#0A1628; --card:#11253C; --card2:#17304B; --line:#223A52; --line2:#30506E;
+  --fg:#FFFFFF; --muted:#AFC3CF; --dim:#7B8E9D;
+  --teal:#4FBFA8; --yel:#E6E03D; --coral:#E8845A;
+  --display:'Archivo','Arial Narrow',Arial,sans-serif;
+  --body:'IBM Plex Sans',-apple-system,'Segoe UI',Arial,sans-serif;
+  --mono:'IBM Plex Mono','Consolas',monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+img{max-width:100%}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.6;margin:0}
+.wrap{max-width:700px;margin:0 auto;padding-block:32px 72px;padding-left:18px;padding-right:18px}
+
+.brand{display:flex;align-items:center;gap:9px;margin-bottom:30px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--yel);flex:none}
+.brand b{font-weight:600;letter-spacing:.03em;font-size:15px}
+
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--teal);
+  text-transform:uppercase;margin:0 0 12px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(27px,5.6vw,38px);line-height:1.14;
+  margin:0 0 18px;text-wrap:balance;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--teal)}
+.lead{color:var(--muted);margin:0 0 14px;font-size:15.5px}
+.meta{font-family:var(--mono);font-size:12px;color:var(--dim);margin:0 0 34px;line-height:1.7}
+
+/* ---- blocos ---- */
+.sec{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:24px 20px;margin-bottom:18px}
+.secnum{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--dim);
+  text-transform:uppercase;display:block;margin-bottom:7px}
+.sectitle{font-family:var(--display);font-weight:600;font-size:19px;line-height:1.3;
+  display:block;margin-bottom:6px}
+.secnote{color:var(--dim);font-size:13.5px;margin:0 0 24px;line-height:1.55}
+
+.q{margin-bottom:24px}
+.q:last-child{margin-bottom:0}
+.q > label,.q > .qt{display:block;font-weight:500;font-size:15px;margin-bottom:6px;line-height:1.45}
+.hint{color:var(--dim);font-size:13px;line-height:1.5;margin:0 0 10px}
+.req{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--teal);
+  text-transform:uppercase;font-weight:400;margin-left:7px;vertical-align:1px}
+input.ruim,select.ruim{border-color:var(--coral)}
+.msg{color:var(--coral);font-size:13px;margin:7px 0 0;line-height:1.45}
+input[type=text],input[type=number],select,textarea{
+  display:block;width:100%;background:var(--card2);color:var(--fg);border:1px solid var(--line2);
+  border-radius:9px;padding:12px 13px;font-family:var(--body);font-size:15px;line-height:1.4}
+input::placeholder,textarea::placeholder{color:#64798A}
+input[type=number]{font-family:var(--mono);font-variant-numeric:tabular-nums}
+textarea{min-height:96px;resize:vertical;line-height:1.55}
+select{appearance:none;padding-right:42px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 20px) 52%,calc(100% - 15px) 52%;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip input{position:absolute;opacity:0;width:0;height:0}
+.chip span{display:block;cursor:pointer;border:1px solid var(--line2);background:var(--card2);
+  border-radius:999px;padding:9px 15px;font-size:14px;color:var(--muted);user-select:none;line-height:1.3}
+.chip input:checked + span{border-color:var(--teal);color:var(--fg);background:#16413E}
+.chip input:focus-visible + span{outline:2px solid var(--teal);outline-offset:2px}
+
+.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+button{font-family:var(--body);font-size:15px;font-weight:600;border-radius:9px;cursor:pointer;
+  border:1px solid transparent;padding:14px 24px;line-height:1.2}
+.primary{background:var(--teal);color:#06211C}
+.primary:disabled{opacity:.5;cursor:not-allowed}
+.ghost{background:transparent;color:var(--muted);border-color:var(--line2)}
+.err{color:var(--coral);font-size:14px;flex-basis:100%}
+
+/* ---- resultado ---- */
+#out{margin-top:34px}
+.laudo{background:var(--card);border:1px solid var(--teal);border-radius:14px;padding:26px 20px}
+.laudo h2{font-family:var(--display);font-weight:700;font-size:clamp(22px,4.6vw,29px);
+  line-height:1.2;margin:0 0 14px;text-wrap:balance}
+.laudo h2 em{font-style:normal;color:var(--teal)}
+.sub{color:var(--muted);font-size:14.5px;margin:0 0 24px;line-height:1.6}
+.sub strong{color:var(--fg)}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(136px,1fr));gap:11px;margin-bottom:8px}
+.tile{background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:15px 14px}
+.tile .k{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--dim);
+  text-transform:uppercase;line-height:1.5;display:block;margin-bottom:8px}
+.tile .v{font-family:var(--display);font-weight:700;font-size:23px;color:var(--teal);
+  line-height:1.1;font-variant-numeric:tabular-nums;display:block}
+.tile .s{color:var(--muted);font-size:12.5px;line-height:1.45;display:block;margin-top:7px}
+
+h3{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--teal);
+  text-transform:uppercase;font-weight:400;margin:32px 0 12px}
+
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:400px}
+thead th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--dim);
+  text-transform:uppercase;font-weight:400;padding:0 8px 9px;text-align:right;white-space:nowrap}
+thead th:first-child{text-align:left;padding-left:0}
+tbody td{padding:11px 8px;border-top:1px solid var(--line);font-size:14.5px;text-align:right;white-space:nowrap}
+tbody td:first-child{text-align:left;padding-left:0;white-space:normal}
+tbody tr:last-child td{font-weight:600;color:var(--fg);border-top:1px solid var(--line2)}
+td.d{color:var(--teal)}
+
+.roteiro{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.roteiro li{background:var(--card2);border:1px solid var(--line);border-left:3px solid var(--teal);
+  border-radius:10px;padding:16px 18px}
+.rf{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between;
+  margin-bottom:8px}
+.rn{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--teal);text-transform:uppercase}
+.rh{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rt{font-family:var(--display);font-weight:600;font-size:16.5px;line-height:1.35;margin-bottom:6px}
+ul.faz{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:9px}
+ul.faz li{color:var(--muted);font-size:14px;line-height:1.5;padding-left:14px;position:relative}
+ul.faz li::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--teal)}
+ul.faz b{font-family:var(--display);font-weight:600;color:var(--fg);font-size:14.5px}
+.rp{color:var(--muted);font-size:13.5px;line-height:1.55}
+
+.ags{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:10px}
+.ag{border:1px solid var(--teal);color:var(--fg);background:#16413E;border-radius:999px;
+  padding:7px 14px;font-size:13.5px;line-height:1.3}
+.ag.off{border-color:var(--line2);background:transparent;color:var(--dim)}
+
+.prem{color:var(--muted);font-size:13.5px;line-height:1.6;margin:0}
+ul.prem{padding-left:20px}
+ul.prem li{margin-bottom:7px}
+
+.ok{background:#16413E;border:1px solid var(--teal);border-radius:11px;padding:18px;margin-top:22px}
+.ok .t{font-family:var(--display);font-weight:600;font-size:17px;color:var(--teal);margin-bottom:5px}
+.falha{background:#3B2A18;border:1px solid var(--coral);border-radius:11px;padding:18px;margin-top:22px}
+.falha .t{font-family:var(--display);font-weight:600;font-size:17px;color:var(--coral);margin-bottom:5px}
+.falha p{color:#F0DCCB;font-size:14px;margin:0 0 14px;line-height:1.55}
+#dump{min-height:210px;font-family:var(--mono);font-size:12px;line-height:1.55;
+  background:#0B1B2E;border-color:var(--line2)}
+.status{font-family:var(--mono);font-size:12px;color:var(--dim);margin:0}
+
+footer{color:var(--dim);font-size:11.5px;font-family:var(--mono);margin-top:40px;
+  border-top:1px solid var(--line);padding-top:18px;line-height:1.7}
+@media (max-width:420px){
+  .sec{padding:20px 16px}
+  .laudo{padding:22px 16px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="brand"><span class="dot"></span><b>HIPP</b></div>
+
+  <p class="eyebrow">Diagnóstico</p>
+  <h1>Onde a inteligência artificial <em>faz diferença no seu dia a dia.</em></h1>
+  <p class="lead">Dez perguntas sobre o volume da sua operação de sustentabilidade. No fim você vê onde está a sua prioridade, quanto tempo e custo dá para recuperar, e por onde começar.</p>
+  <p class="meta">Cerca de 4 minutos<br>Nenhuma pergunta sobre horas: a gente calcula isso a partir do que você já sabe de cabeça</p>
+
+  <form id="f" novalidate>
+
+    <div class="sec">
+      <span class="secnum">Bloco 1 de 5</span>
+      <span class="sectitle">Quem está respondendo</span>
+      <p class="secnote">O resultado é calculado em cima da sua operação, então ele vai com o seu nome. Levamos o diagnóstico completo até você depois.</p>
+
+      <div class="q">
+        <label for="quemresp">Nome completo <span class="req">obrigatório</span></label>
+        <input type="text" id="quemresp" placeholder="Seu nome" autocomplete="name">
+      </div>
+
+      <div class="q">
+        <label for="cargo">Cargo <span class="req">obrigatório</span></label>
+        <input type="text" id="cargo" placeholder="Ex: gerente de sustentabilidade" autocomplete="organization-title">
+      </div>
+
+      <div class="q">
+        <label for="empresa">Empresa <span class="req">obrigatório</span></label>
+        <input type="text" id="empresa" placeholder="Nome da empresa" autocomplete="organization">
+      </div>
+
+      <div class="q">
+        <label for="email">E-mail corporativo <span class="req">obrigatório</span></label>
+        <input type="text" id="email" placeholder="voce@empresa.com.br" autocomplete="email" inputmode="email">
+      </div>
+
+      <div class="q">
+        <label for="fone">WhatsApp <span class="req">obrigatório</span></label>
+        <p class="hint">Com DDD. É por aqui que mandamos o resultado detalhado.</p>
+        <input type="text" id="fone" placeholder="(51) 99999-9999" autocomplete="tel" inputmode="tel">
+      </div>
+    </div>
+
+    <div class="sec">
+      <span class="secnum">Bloco 2 de 5</span>
+      <span class="sectitle">O que vocês reportam</span>
+      <p class="secnote">Para quem a empresa presta contas e com que frequência.</p>
+
+      <div class="q">
+        <span class="qt">Quais frameworks ou padrões vocês reportam hoje?</span>
+        <p class="hint">Marque todos que se aplicam.</p>
+        <div class="chips" id="fw">
+          <label class="chip"><input type="checkbox" value="GRI"><span>GRI</span></label>
+          <label class="chip"><input type="checkbox" value="IFRS S1/S2"><span>IFRS S1 e S2</span></label>
+          <label class="chip"><input type="checkbox" value="GHG Protocol"><span>GHG Protocol</span></label>
+          <label class="chip"><input type="checkbox" value="CDP"><span>CDP</span></label>
+          <label class="chip"><input type="checkbox" value="SASB"><span>SASB</span></label>
+          <label class="chip"><input type="checkbox" value="ISE B3"><span>ISE B3</span></label>
+          <label class="chip"><input type="checkbox" value="EcoVadis"><span>EcoVadis</span></label>
+          <label class="chip"><input type="checkbox" value="Nenhum"><span>Nenhum ainda</span></label>
+        </div>
+      </div>
+
+      <div class="q">
+        <label for="score">Se vocês já têm nota ou classificação, qual?</label>
+        <p class="hint">ISE B3, EcoVadis (0 a 100 ou medalha) ou CDP (A até D-). Deixe em branco se ainda não houver.</p>
+        <input type="text" id="score" placeholder="Ex: EcoVadis 58, medalha bronze">
+      </div>
+
+      <div class="q">
+        <label for="jur">Em quantos países a empresa opera e divulga os dados de sustentabilidade através de relatórios?</label>
+        <input type="number" id="jur" min="1" max="60" step="1" value="1">
+      </div>
+
+      <div class="q">
+        <label for="rel">Quantos relatórios e respostas a questionário vocês produzem por ano?</label>
+        <p class="hint">Conte relatório anual, CDP, ISE, EcoVadis e questionário de cliente ou investidor.</p>
+        <input type="number" id="rel" min="0" max="200" step="1" value="4">
+      </div>
+    </div>
+
+    <div class="sec">
+      <span class="secnum">Bloco 3 de 5</span>
+      <span class="sectitle">Como o dado chega até vocês</span>
+      <p class="secnote">De onde vem a informação e quanta gente cuida dela.</p>
+
+      <div class="q">
+        <label for="und">Quantas unidades operacionais entram na coleta de dado?</label>
+        <p class="hint">Plantas, lojas, fazendas, centros de distribuição, escritórios.</p>
+        <input type="number" id="und" min="0" max="5000" step="1" value="5">
+      </div>
+
+      <div class="q">
+        <label for="fon">Quantas fontes de dado diferentes vocês consolidam?</label>
+        <p class="hint">Conta de energia, nota de resíduo, planilha de RH, sistema de ponto, ERP, medidor de água.</p>
+        <input type="number" id="fon" min="0" max="500" step="1" value="8">
+      </div>
+
+      <div class="q">
+        <label for="como">Como esse dado chega hoje?</label>
+        <select id="como">
+          <option value="planilha">Planilha enviada por e-mail, na maior parte</option>
+          <option value="misto" selected>Misto, parte em sistema e parte em planilha</option>
+          <option value="sistema">Sistema ou ERP, integrado na maior parte</option>
+        </select>
+      </div>
+
+      <div class="q">
+        <label for="pes">Quantas pessoas dedicadas ao time de sustentabilidade?</label>
+        <input type="number" id="pes" min="0" max="200" step="0.5" value="2">
+      </div>
+
+      <div class="q">
+        <label for="ext">Quanto a empresa gasta por ano com apoio externo nessa área?</label>
+        <p class="hint">Consultoria, auditoria de terceira parte, verificação, assessoria de relatório.</p>
+        <select id="ext">
+          <option value="0">Não contratamos apoio externo</option>
+          <option value="30000">Até R$ 50 mil por ano</option>
+          <option value="90000" selected>R$ 50 mil a R$ 150 mil</option>
+          <option value="250000">R$ 150 mil a R$ 400 mil</option>
+          <option value="550000">Acima de R$ 400 mil</option>
+        </select>
+      </div>
+
+      <div class="q">
+        <label for="custo">Custo mensal cheio de um analista do time</label>
+        <p class="hint">Salário mais encargos. Serve só para converter horas em reais.</p>
+        <select id="custo">
+          <option value="10000">Até R$ 12 mil</option>
+          <option value="14000" selected>R$ 12 mil a R$ 16 mil</option>
+          <option value="19000">R$ 16 mil a R$ 22 mil</option>
+          <option value="26000">Acima de R$ 22 mil</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sec">
+      <span class="secnum">Bloco 4 de 5</span>
+      <span class="sectitle">A cadeia de fornecedores</span>
+      <p class="secnote">Se a empresa ainda não trabalha a cadeia, responda zero e siga.</p>
+
+      <div class="q">
+        <label for="forn">Quantos fornecedores ativos?</label>
+        <input type="number" id="forn" min="0" max="200000" step="1" value="800">
+      </div>
+
+      <div class="q">
+        <label for="crit">Quantos são considerados críticos?</label>
+        <p class="hint">Risco socioambiental, dependência, volume ou exposição reputacional.</p>
+        <input type="number" id="crit" min="0" max="200000" step="1" value="120">
+      </div>
+
+      <div class="q">
+        <label for="exig">Vocês exigem documento ou evidência de sustentabilidade deles?</label>
+        <select id="exig">
+          <option value="todos">Sim, de todos os fornecedores</option>
+          <option value="criticos" selected>Sim, dos críticos</option>
+          <option value="amostra">Por amostragem</option>
+          <option value="nao">Ainda não exigimos</option>
+        </select>
+      </div>
+
+      <div class="q">
+        <label for="freq">Com que frequência verificam?</label>
+        <select id="freq">
+          <option value="1">Uma vez por ano</option>
+          <option value="2" selected>A cada seis meses</option>
+          <option value="4">A cada trimestre</option>
+          <option value="12">Acompanhamento contínuo</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sec">
+      <span class="secnum">Bloco 5 de 5</span>
+      <span class="sectitle">Ajude a melhorar o diagnóstico</span>
+      <p class="secnote">Opcional, mas vale muito. São duas perguntas sobre o próprio questionário.</p>
+
+      <div class="q">
+        <label for="fb1">Alguma pergunta ficou confusa ou difícil de responder?</label>
+        <textarea id="fb1" placeholder="Diga qual e por quê."></textarea>
+      </div>
+
+      <div class="q">
+        <label for="fb2">O que falta perguntar para o resultado fazer sentido?</label>
+        <textarea id="fb2" placeholder="O que você esperaria ver aqui e não viu."></textarea>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="primary" id="go">Enviar e ver meu resultado</button>
+      <span class="err" id="formerr" hidden></span>
+    </div>
+  </form>
+
+  <div id="out" hidden></div>
+
+  <footer>HIPP &middot; Plataforma de inteligência para sustentabilidade<br>contato@hipp.com.br</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var HORAS_MES = 160, HORAS_ANO_FTE = 1760;
+  var P = {
+    hUnidade: 8, hFonte: 12,
+    mPlanilha: 1.4, mMisto: 1.15, mSistema: 1.0,
+    hFw1: 120, hFwN: 60, hRelato: 16, hJur: 40,
+    hVerif: 0.5, absorveExterno: 0.35,
+    redColeta: 0.60, redRelato: 0.75, redCadeia: 0.75
+  };
+
+  var f = document.getElementById('f'), out = document.getElementById('out'), err = document.getElementById('formerr');
+
+  function n(id){ var v = parseFloat(document.getElementById(id).value); return isFinite(v) && v >= 0 ? v : 0; }
+  function t(id){ return document.getElementById(id).value.trim(); }
+  function brl(v){ return 'R$ ' + Math.round(v).toLocaleString('pt-BR'); }
+  function hrs(v){ return Math.round(v).toLocaleString('pt-BR') + ' h'; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function coletar(){
+    var fw = [];
+    Array.prototype.forEach.call(document.querySelectorAll('#fw input:checked'), function(i){ fw.push(i.value); });
+    return {
+      empresa: t('empresa'), email: t('email'), score: t('score'), quemResp: t('quemresp'),
+      cargo: t('cargo'), telefone: t('fone'),
+      frameworks: fw,
+      jurisdicoes: Math.max(1, n('jur')), relatorios: n('rel'),
+      unidades: n('und'), fontes: n('fon'),
+      comoDado: document.getElementById('como').value,
+      pessoas: n('pes'), custoMes: n('custo'), gastoExterno: n('ext'),
+      fornecedores: n('forn'), criticos: n('crit'),
+      exigencia: document.getElementById('exig').value,
+      frequencia: n('freq'),
+      feedbackConfuso: t('fb1'), feedbackFalta: t('fb2')
+    };
+  }
+
+  function calcular(d){
+    var mult = d.comoDado === 'planilha' ? P.mPlanilha : (d.comoDado === 'sistema' ? P.mSistema : P.mMisto);
+    var coleta = (d.unidades * P.hUnidade + d.fontes * P.hFonte) * mult;
+
+    var nFw = d.frameworks.filter(function(x){ return x !== 'Nenhum'; }).length;
+    var relato = (nFw > 0 ? P.hFw1 + (nFw - 1) * P.hFwN : 0)
+               + d.relatorios * P.hRelato
+               + (d.jurisdicoes - 1) * P.hJur;
+
+    var base = 0;
+    if (d.exigencia === 'todos') base = d.fornecedores;
+    else if (d.exigencia === 'criticos') base = d.criticos;
+    else if (d.exigencia === 'amostra') base = d.criticos * 0.3;
+    var cadeia = base * P.hVerif * d.frequencia;
+
+    var hora = d.custoMes / HORAS_MES;
+    var total = coleta + relato + cadeia;
+    var devolve = coleta * P.redColeta + relato * P.redRelato + cadeia * P.redCadeia;
+    var valorInterno = devolve * hora;
+    var valorExterno = d.gastoExterno * P.absorveExterno;
+
+    return {
+      mult: mult, nFw: nFw, baseVerif: base, hora: hora,
+      linhas: [
+        { nome: 'Coleta e consolidação', h: coleta, d: coleta * P.redColeta },
+        { nome: 'Relato e resposta',     h: relato, d: relato * P.redRelato },
+        { nome: 'Verificação de cadeia', h: cadeia, d: cadeia * P.redCadeia }
+      ],
+      total: total, devolve: devolve,
+      custoTotal: total * hora,
+      valorInterno: valorInterno, valorExterno: valorExterno,
+      custoDevolve: valorInterno + valorExterno,
+      fte: devolve / HORAS_ANO_FTE
+    };
+  }
+
+  var OQUEFAZ = {
+    'Coleta': 'busca o dado em cada unidade e em cada fonte, consolida e entrega pronto para uso, sem planilha circulando por e-mail',
+    'Relato': 'monta o relatório no formato exigido por cada framework a partir do dado já consolidado, com a origem de cada número rastreável',
+    'Regulação': 'acompanha o que muda em norma, exigência de cliente e cobrança de investidor, e avisa só o que afeta a sua empresa',
+    'Materialidade': 'revisa o que é material para a empresa cruzando setor, stakeholder e exigência vigente, em vez de repetir a matriz do ano passado',
+    'Conformidade Documental': 'confere cada documento e evidência de fornecedor contra a regra que está valendo, aponta o que venceu e o que está fora',
+    'Compra Sustentável': 'avalia e classifica fornecedor por risco socioambiental e indica onde vale desenvolver ou substituir',
+    'Desenvolvimento': 'acompanha o plano de adequação de cada fornecedor até ele atender o que foi exigido'
+  };
+
+  function agentes(d, r){
+    var temFw = d.frameworks.some(function(x){ return x !== 'Nenhum'; });
+    return [
+      { nome: 'Coleta',                  on: d.unidades > 0 || d.fontes > 0 },
+      { nome: 'Relato',                  on: d.relatorios > 0 || temFw },
+      { nome: 'Regulação',               on: d.jurisdicoes > 1 || r.nFw >= 2 },
+      { nome: 'Materialidade',           on: d.frameworks.indexOf('GRI') > -1 || d.frameworks.indexOf('ISE B3') > -1 },
+      { nome: 'Conformidade Documental', on: d.exigencia !== 'nao' },
+      { nome: 'Compra Sustentável',      on: d.criticos >= 30 },
+      { nome: 'Desenvolvimento',         on: d.exigencia !== 'nao' && d.criticos > 0 }
+    ];
+  }
+
+  function roteiro(d, r, ags){
+    var ativo = {};
+    ags.forEach(function(a){ if (a.on) ativo[a.nome] = true; });
+
+    var frentes = [
+      { id:'coleta', nome:'Coleta e consolidação', dev:r.linhas[0].d, agentes:['Coleta'] },
+      { id:'relato', nome:'Relato e resposta',     dev:r.linhas[1].d, agentes:['Relato','Regulação','Materialidade'] },
+      { id:'cadeia', nome:'Verificação de cadeia', dev:r.linhas[2].d, agentes:['Conformidade Documental','Compra Sustentável','Desenvolvimento'] }
+    ].map(function(fr){
+      fr.agentes = fr.agentes.filter(function(x){ return ativo[x]; });
+      return fr;
+    }).filter(function(fr){ return fr.agentes.length > 0 && fr.dev > 0; });
+
+    frentes.sort(function(a, b){ return b.dev - a.dev; });
+    if (!frentes.length) return [];
+
+    var nota = '';
+    if (frentes[0].id === 'relato') {
+      var iC = -1;
+      for (var i = 1; i < frentes.length; i++) if (frentes[i].id === 'coleta') iC = i;
+      if (iC > -1) {
+        var c = frentes.splice(iC, 1)[0];
+        frentes[0].agentes = c.agentes.concat(frentes[0].agentes);
+        frentes[0].dev += c.dev;
+        nota = ' A coleta entra junto, porque o relatório só fica confiável com o dado já consolidado.';
+      }
+    }
+
+    return frentes.map(function(fr, i){
+      var porque = i === 0 ? 'É onde está a maior parte do tempo que volta para o time.' + nota
+                 : i === 1 ? 'Entra depois, com a base da primeira fase já rodando.'
+                           : 'Fecha o ciclo, quando as outras frentes já estão estáveis.';
+      return { fase: i + 1, agentes: fr.agentes, dev: fr.dev, porque: porque };
+    });
+  }
+
+  function render(d, r){
+    var ags = agentes(d, r), rota = roteiro(d, r, ags);
+    var quem = d.empresa ? ' no time de ' + esc(d.empresa) : ' no seu time';
+
+    var rows = r.linhas.map(function(l){
+      return '<tr><td>' + l.nome + '</td><td>' + hrs(l.h) +
+             '</td><td class="d">' + hrs(l.d) + '</td><td class="d">' + brl(l.d * r.hora) + '</td></tr>';
+    }).join('');
+
+    out.innerHTML =
+      '<div class="laudo">' +
+        '<p class="eyebrow">Seu resultado</p>' +
+        '<h2>Dá para recuperar <em>' + brl(r.custoDevolve) + ' por ano</em>' + quem + '.</h2>' +
+        '<p class="sub">São <strong>' + hrs(r.devolve) + ' de equipe</strong> que hoje vão para conferir, consolidar e ' +
+          'formatar e passam a sobrar para decidir' +
+          (r.valorExterno > 0 ? ', mais <strong>' + brl(r.valorExterno) + '</strong> do que hoje é contratado fora e ' +
+            'o agente passa a fazer dentro de casa' : '') + '. ' +
+          (d.score ? 'Sua classificação atual, <strong>' + esc(d.score) + '</strong>, é o que esse esforço sustenta.' : '') +
+        '</p>' +
+
+        '<div class="tiles">' +
+          '<div class="tile"><span class="k">Hoje</span><span class="v">' +
+            Math.round(r.total).toLocaleString('pt-BR') + ' h</span>' +
+            '<span class="s">por ano em tarefas que seguem regra</span></div>' +
+          '<div class="tile"><span class="k">Recuperado</span><span class="v">' +
+            Math.round(r.devolve).toLocaleString('pt-BR') + ' h</span>' +
+            '<span class="s">' + Math.round(100 * r.devolve / (r.total || 1)) + '% do total</span></div>' +
+          '<div class="tile"><span class="k">Equipe</span><span class="v">' +
+            brl(r.valorInterno) + '</span><span class="s">de hora de time, a ' + brl(r.hora) + ' a hora</span></div>' +
+          (r.valorExterno > 0
+            ? '<div class="tile"><span class="k">Apoio externo</span><span class="v">' + brl(r.valorExterno) +
+              '</span><span class="s">parcela do que hoje é contratado fora</span></div>'
+            : '') +
+        '</div>' +
+
+        '<h3>Por onde começar</h3>' +
+        (rota.length
+          ? '<ol class="roteiro">' + rota.map(function(fr){
+              return '<li>' +
+                '<div class="rf"><span class="rn">Fase ' + fr.fase + '</span>' +
+                '<span class="rh">recupera ' + hrs(fr.dev) + ' por ano</span></div>' +
+                '<ul class="faz">' + fr.agentes.map(function(nome){
+                  return '<li><b>Agente de ' + nome + '</b> ' + (OQUEFAZ[nome] || '') + '</li>';
+                }).join('') + '</ul>' +
+                '<div class="rp">' + fr.porque + '</div></li>';
+            }).join('') + '</ol>'
+          : '<p class="prem">Com as respostas dadas, não há volume suficiente para indicar uma frente.</p>') +
+
+        '<h3>Onde está esse tempo</h3>' +
+        '<div class="scroller"><table>' +
+          '<thead><tr><th>Frente</th><th>Hoje</th><th>Recuperado</th><th>Em dinheiro</th></tr></thead>' +
+          '<tbody>' + rows +
+            (r.valorExterno > 0
+              ? '<tr><td>Apoio externo substituído</td><td>-</td><td class="d">-</td><td class="d">' +
+                brl(r.valorExterno) + '</td></tr>'
+              : '') +
+            '<tr><td>Total</td><td>' + hrs(r.total) + '</td><td class="d">' + hrs(r.devolve) +
+            '</td><td class="d">' + brl(r.custoDevolve) + '</td></tr>' +
+          '</tbody></table></div>' +
+
+        '<h3>Agentes indicados para o seu caso</h3>' +
+        '<div class="ags">' + ags.map(function(a){
+          return '<span class="ag' + (a.on ? '' : ' off') + '">' + a.nome + '</span>';
+        }).join('') + '</div>' +
+        '<p class="prem">Os apagados não fazem sentido no seu cenário. Ativar menos agentes custa menos.</p>' +
+
+        '<h3>Como a conta foi feita</h3>' +
+        '<ul class="prem">' +
+          '<li>Coleta: ' + P.hUnidade + ' h por unidade operacional e ' + P.hFonte + ' h por fonte de dado, ao ano, ' +
+            'com fator ' + r.mult.toFixed(2).replace('.', ',') + ' pelo jeito que o dado chega até vocês.</li>' +
+          '<li>Relato: ' + P.hFw1 + ' h no primeiro framework, ' + P.hFwN + ' h em cada adicional, ' +
+            P.hRelato + ' h por relatório ou questionário e ' + P.hJur + ' h por país além do primeiro.</li>' +
+          '<li>Cadeia: ' + String(P.hVerif).replace('.', ',') + ' h por fornecedor verificado, sobre ' +
+            Math.round(r.baseVerif).toLocaleString('pt-BR') + ' fornecedores, ' + d.frequencia + ' vez(es) ao ano.</li>' +
+          '<li>Reduções de ' + (P.redColeta * 100) + '%, ' + (P.redRelato * 100) + '% e ' + (P.redCadeia * 100) +
+            '%, medidas em cliente real onde um processo de 704 h por ano passou para 176 h.</li>' +
+          (d.gastoExterno > 0
+            ? '<li>Apoio externo: ' + (P.absorveExterno * 100) + '% do que hoje é contratado fora passa a ser feito ' +
+              'pelo agente. O que exige julgamento humano continua sendo contratado.</li>'
+            : '') +
+        '</ul>' +
+
+        '<div class="actions" style="margin-top:28px">' +
+          '<button type="button" class="ghost" id="again">Refazer</button>' +
+        '</div>' +
+        '<div id="desfecho"></div>' +
+      '</div>';
+
+    out.hidden = false;
+    out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('again').addEventListener('click', function(){
+      out.hidden = true; window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  var SESSAO = 'h' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+  function pacote(d, r, ags){
+    return {
+      id: SESSAO,
+      criadoEm: new Date().toISOString(),
+      respostas: d,
+      agentes: ags.filter(function(a){ return a.on; }).map(function(a){ return a.nome; }),
+      roteiro: roteiro(d, r, ags).map(function(fr){
+        return 'Fase ' + fr.fase + ': ' + fr.agentes.join(' + ') + ' (' + Math.round(fr.dev) + ' h)';
+      }),
+      resultado: {
+        horasAno: Math.round(r.total), horasRecuperadas: Math.round(r.devolve),
+        custoAno: Math.round(r.custoTotal), custoRecuperado: Math.round(r.custoDevolve),
+        valorEquipe: Math.round(r.valorInterno), valorExterno: Math.round(r.valorExterno),
+        fte: Number(r.fte.toFixed(2)),
+        coleta: Math.round(r.linhas[0].h), relato: Math.round(r.linhas[1].h), cadeia: Math.round(r.linhas[2].h)
+      }
+    };
+  }
+
+  function textoParaCopiar(d, r, ags){
+    var p = pacote(d, r, ags), L = [];
+    L.push('DIAGNÓSTICO HIPP · ' + (d.empresa || 'sem nome'));
+    if (d.quemResp) L.push('Respondido por: ' + d.quemResp + (d.cargo ? ', ' + d.cargo : ''));
+    if (d.email) L.push('E-mail: ' + d.email);
+    if (d.telefone) L.push('WhatsApp: ' + d.telefone);
+    L.push('');
+    L.push('RESULTADO');
+    L.push('  Horas por ano hoje: ' + p.resultado.horasAno);
+    L.push('  Horas recuperadas: ' + p.resultado.horasRecuperadas);
+    L.push('  Valor recuperado: R$ ' + p.resultado.custoRecuperado.toLocaleString('pt-BR') + ' ao ano');
+    L.push('    sendo R$ ' + p.resultado.valorEquipe.toLocaleString('pt-BR') + ' de hora de equipe' +
+           ' e R$ ' + p.resultado.valorExterno.toLocaleString('pt-BR') + ' de apoio externo');
+    r.linhas.forEach(function(l){
+      L.push('  ' + l.nome + ': ' + Math.round(l.h) + ' h, recupera ' + Math.round(l.d) + ' h');
+    });
+    L.push('');
+    L.push('POR ONDE COMEÇAR');
+    p.roteiro.forEach(function(x){ L.push('  ' + x); });
+    L.push('');
+    L.push('AGENTES: ' + p.agentes.join(', '));
+    L.push('');
+    L.push('RESPOSTAS');
+    L.push('  Frameworks: ' + (d.frameworks.join(', ') || 'nenhum'));
+    L.push('  Classificação: ' + (d.score || 'não informada'));
+    L.push('  Países: ' + d.jurisdicoes + ' | Relatórios por ano: ' + d.relatorios);
+    L.push('  Unidades: ' + d.unidades + ' | Fontes de dado: ' + d.fontes);
+    L.push('  Como o dado chega: ' + d.comoDado + ' | Pessoas no time: ' + d.pessoas);
+    L.push('  Custo mensal do analista: R$ ' + d.custoMes.toLocaleString('pt-BR'));
+    L.push('  Gasto externo ao ano: R$ ' + d.gastoExterno.toLocaleString('pt-BR'));
+    L.push('  Fornecedores: ' + d.fornecedores + ' (críticos: ' + d.criticos + ')');
+    L.push('  Exigência: ' + d.exigencia + ' | Verificações por ano: ' + d.frequencia);
+    if (d.feedbackConfuso) { L.push(''); L.push('FICOU CONFUSO: ' + d.feedbackConfuso); }
+    if (d.feedbackFalta)   { L.push(''); L.push('FALTA PERGUNTAR: ' + d.feedbackFalta); }
+    return L.join('\n');
+  }
+
+  function mostrarFalha(d, r, ags){
+    var box = document.getElementById('desfecho');
+    if (!box) return;
+    box.innerHTML =
+      '<div class="falha">' +
+        '<div class="t">O resultado acima está certo, mas não consegui registrar aqui</div>' +
+        '<p>Nada se perdeu. Copie o texto abaixo e mande para a HIPP, que vale exatamente o mesmo.</p>' +
+        '<textarea id="dump" readonly></textarea>' +
+        '<div class="actions" style="margin-top:12px">' +
+          '<button type="button" class="primary" id="copiar">Copiar texto</button>' +
+          '<span class="status" id="cst"></span>' +
+        '</div>' +
+      '</div>';
+    var ta = document.getElementById('dump');
+    ta.value = textoParaCopiar(d, r, ags);
+    document.getElementById('copiar').addEventListener('click', function(){
+      var cst = document.getElementById('cst');
+      var fallback = function(){ ta.focus(); ta.select(); cst.textContent = 'Texto selecionado. Use Ctrl+C ou Cmd+C.'; };
+      try {
+        navigator.clipboard.writeText(ta.value).then(function(){ cst.textContent = 'Copiado.'; }, fallback);
+      } catch (e) { fallback(); }
+    });
+  }
+
+  var DESTINO = 'https://script.google.com/macros/s/AKfycbzIIk7friJz_sZE75YMTPdEKFycNOT3dXJO622_TKwEO1ss6X7LOv1iQoHlGcfmzoBc/exec';
+
+  /* Manda para o Apps Script em segundo plano. O celular nunca navega
+     para o Google, então não tem app atravessando o caminho.
+     text/plain de propósito: é requisição simples, não dispara preflight. */
+  function enviar(carga, aoFalhar){
+    try {
+      fetch(DESTINO, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(carga)
+      }).catch(function(){ if (aoFalhar) aoFalhar(); });
+    } catch (e) { if (aoFalhar) aoFalhar(); }
+  }
+
+  /* grava só a identificação, uma vez, assim que ela estiver completa */
+  var parcialEnviada = false;
+  function enviarParcial(){
+    if (parcialEnviada) return;
+    var vazio = OBRIG.some(function(c){ return !document.getElementById(c.id).value.trim(); });
+    if (vazio) return;
+    var d = coletar();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) return;
+    if (d.telefone.replace(/\D/g, '').length < 10) return;
+    parcialEnviada = true;
+    enviar({ id: SESSAO, parcial: true, criadoEm: new Date().toISOString(), respostas: d });
+  }
+
+  function salvar(d, r, ags){
+    parcialEnviada = true;
+    enviar(pacote(d, r, ags), function(){ mostrarFalha(d, r, ags); });
+  }
+
+  var OBRIG = [
+    { id:'quemresp', nome:'seu nome' },
+    { id:'cargo',    nome:'seu cargo' },
+    { id:'empresa',  nome:'a empresa' },
+    { id:'email',    nome:'o e-mail' },
+    { id:'fone',     nome:'o WhatsApp' }
+  ];
+
+  function marcar(el, texto){
+    el.classList.add('ruim');
+    var m = el.parentNode.querySelector('.msg');
+    if (!m) { m = document.createElement('p'); m.className = 'msg'; el.parentNode.appendChild(m); }
+    m.textContent = texto;
+  }
+  function limpar(el){
+    el.classList.remove('ruim');
+    var m = el.parentNode.querySelector('.msg');
+    if (m) m.parentNode.removeChild(m);
+  }
+
+  OBRIG.forEach(function(c){
+    var el = document.getElementById(c.id);
+    el.addEventListener('input', function(){ limpar(el); });
+    el.addEventListener('blur', enviarParcial);
+  });
+
+  function validar(d){
+    var falhou = null;
+    OBRIG.forEach(function(c){
+      var el = document.getElementById(c.id);
+      limpar(el);
+      if (!el.value.trim()) {
+        marcar(el, 'Preencha ' + c.nome + ' para continuar.');
+        if (!falhou) falhou = el;
+      }
+    });
+    if (falhou) return falhou;
+
+    var em = document.getElementById('email');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em.value.trim())) {
+      marcar(em, 'Esse e-mail parece incompleto. Confira antes de seguir.');
+      return em;
+    }
+    var fo = document.getElementById('fone');
+    if (fo.value.replace(/\D/g, '').length < 10) {
+      marcar(fo, 'Coloque o número com DDD.');
+      return fo;
+    }
+    return null;
+  }
+
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var d = coletar();
+
+    var ruim = validar(d);
+    if (ruim) {
+      err.textContent = 'Faltou preencher a sua identificação, ali no primeiro bloco.';
+      err.hidden = false;
+      ruim.scrollIntoView({ behavior:'smooth', block:'center' });
+      try { ruim.focus({ preventScroll:true }); } catch (x) { ruim.focus(); }
+      return;
+    }
+
+    if (d.unidades === 0 && d.fontes === 0 && d.relatorios === 0 && d.fornecedores === 0) {
+      err.textContent = 'Preencha pelo menos um volume para eu ter o que calcular.';
+      err.hidden = false;
+      return;
+    }
+    err.hidden = true;
+    var r = calcular(d), ags = agentes(d, r);
+    render(d, r);
+    salvar(d, r, ags);
+  });
+})();
+</script>
+</body>
+</html>
