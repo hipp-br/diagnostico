@@ -91,6 +91,36 @@ button{font-family:var(--body);font-size:15px;font-weight:600;border-radius:9px;
 .sub strong{color:var(--fg)}
 
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(136px,1fr));gap:11px;margin-bottom:8px}
+
+/* ---- painéis de comparação: horas e dinheiro ---- */
+.paineis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:26px 0 8px}
+@media (max-width:620px){.paineis{grid-template-columns:1fr}}
+.painel{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:18px 16px}
+.painel > .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--teal);
+  text-transform:uppercase;display:block;margin-bottom:16px}
+
+.barra{margin-bottom:14px}
+.barra .t{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+.barra .n{color:var(--muted);font-size:13px}
+.barra .q{font-family:var(--display);font-weight:700;font-size:19px;color:var(--fg);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.barra .q.on{color:var(--teal)}
+.trilho{height:9px;border-radius:5px;background:#0C1E33;overflow:hidden}
+.trilho i{display:block;height:100%;border-radius:5px;background:var(--line2)}
+.trilho i.on{background:var(--teal)}
+
+.rem{border-top:1px solid var(--line);margin-top:16px;padding-top:14px;
+  color:var(--muted);font-size:13px;line-height:1.5}
+.rem b{color:var(--fg)}
+
+.linhas{display:flex;flex-direction:column;gap:13px}
+.linha{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.linha .n{color:var(--muted);font-size:13px;line-height:1.4}
+.linha .v{font-family:var(--display);font-weight:700;font-size:18px;color:var(--fg);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.linha.total{border-top:1px solid var(--line2);padding-top:13px;margin-top:3px}
+.linha.total .n{color:var(--fg);font-weight:600;font-size:14px}
+.linha.total .v{color:var(--teal);font-size:23px}
 .tile{background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:15px 14px}
 .tile .k{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--dim);
   text-transform:uppercase;line-height:1.5;display:block;margin-bottom:8px}
@@ -156,10 +186,10 @@ footer{color:var(--dim);font-size:11.5px;font-family:var(--mono);margin-top:40px
 <div class="wrap">
   <div class="brand"><span class="dot"></span><b>HIPP</b></div>
 
-  <p class="eyebrow">Diagnóstico</p>
-  <h1>Onde a inteligência artificial <em>faz diferença no seu dia a dia.</em></h1>
-  <p class="lead">Dez perguntas sobre o volume da sua operação de sustentabilidade. No fim você vê onde está a sua prioridade, quanto tempo e custo dá para recuperar, e por onde começar.</p>
-  <p class="meta">Cerca de 4 minutos<br>Nenhuma pergunta sobre horas: a gente calcula isso a partir do que você já sabe de cabeça</p>
+  <p class="eyebrow">Diagnóstico de operação</p>
+  <h1>Quantas horas por ano a sua área gasta em <em>trabalho que segue regra.</em></h1>
+  <p class="lead">Dez perguntas sobre o volume da sua operação. A conta é feita sobre a estrutura do seu caso, cruzando unidades, fontes de dado, frameworks, países e cadeia com a base normativa que a HIPP mantém. No fim você vê onde está o tempo, quanto dá para recuperar e por onde começar.</p>
+  <p class="meta">Cerca de 4 minutos<br>Nenhuma pergunta sobre horas: a conta sai do que você já sabe de cabeça<br>Onde alguma coisa não se aplicar à sua área, responda zero</p>
 
   <form id="f" novalidate>
 
@@ -222,13 +252,14 @@ footer{color:var(--dim);font-size:11.5px;font-family:var(--mono);margin-top:40px
       </div>
 
       <div class="q">
-        <label for="jur">Em quantos países a empresa opera e divulga os dados de sustentabilidade através de relatórios?</label>
+        <label for="jur">Em quantos países estão as operações cujo dado passa pela sua área?</label>
+        <p class="hint">Se a empresa reporta de forma global e integrada, conte os países que a sua área precisa consolidar.</p>
         <input type="number" id="jur" min="1" max="60" step="1" value="1">
       </div>
 
       <div class="q">
-        <label for="rel">Quantos relatórios e respostas a questionário vocês produzem por ano?</label>
-        <p class="hint">Conte relatório anual, CDP, ISE, EcoVadis e questionário de cliente ou investidor.</p>
+        <label for="rel">Quantas entregas de relato a sua área produz ou alimenta por ano?</label>
+        <p class="hint">Relatório anual, CDP, ISE B3, EcoVadis e questionário de cliente ou investidor. Se a empresa reporta global e integrado, conte o que a sua área entrega para alimentar esse reporte, mais os questionários que chegam até vocês.</p>
         <input type="number" id="rel" min="0" max="200" step="1" value="4">
       </div>
     </div>
@@ -361,7 +392,7 @@ footer{color:var(--dim);font-size:11.5px;font-family:var(--mono);margin-top:40px
     mPlanilha: 1.4, mMisto: 1.15, mSistema: 1.0,
     hFw1: 120, hFwN: 60, hRelato: 16, hJur: 40,
     hVerif: 0.5, absorveExterno: 0.35,
-    redColeta: 0.60, redRelato: 0.75, redCadeia: 0.75
+    redColeta: 0.45, redRelato: 0.60, redCadeia: 0.55
   };
 
   var f = document.getElementById('f'), out = document.getElementById('out'), err = document.getElementById('formerr');
@@ -369,6 +400,22 @@ footer{color:var(--dim);font-size:11.5px;font-family:var(--mono);margin-top:40px
   function n(id){ var v = parseFloat(document.getElementById(id).value); return isFinite(v) && v >= 0 ? v : 0; }
   function t(id){ return document.getElementById(id).value.trim(); }
   function brl(v){ return 'R$ ' + Math.round(v).toLocaleString('pt-BR'); }
+
+  /* converte horas em algo que qualquer um visualiza */
+  function vezes(n){
+    var nome = { 1:'uma vez', 2:'duas vezes', 4:'quatro vezes', 12:'doze vezes' };
+    return nome[n] || (n + ' vezes');
+  }
+
+  function tempoHumano(horas){
+    var meses = horas / HORAS_MES;
+    if (meses < 1.5) { var dias = Math.round(horas / 8); return dias + (dias === 1 ? ' dia' : ' dias'); }
+    if (meses < 11.5) { var m = Math.round(meses); return m + (m === 1 ? ' mês' : ' meses'); }
+    if (meses < 15)   return 'um ano';
+    if (meses < 21)   return 'um ano e meio';
+    var anos = meses / 12;
+    return anos.toFixed(1).replace('.', ',') + ' anos';
+  }
   function hrs(v){ return Math.round(v).toLocaleString('pt-BR') + ' h'; }
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
@@ -419,7 +466,7 @@ footer{color:var(--dim);font-size:11.5px;font-family:var(--mono);margin-top:40px
         { nome: 'Relato e resposta',     h: relato, d: relato * P.redRelato },
         { nome: 'Verificação de cadeia', h: cadeia, d: cadeia * P.redCadeia }
       ],
-      total: total, devolve: devolve,
+      total: total, devolve: devolve, restante: total - devolve,
       custoTotal: total * hora,
       valorInterno: valorInterno, valorExterno: valorExterno,
       custoDevolve: valorInterno + valorExterno,
@@ -498,28 +545,48 @@ footer{color:var(--dim);font-size:11.5px;font-family:var(--mono);margin-top:40px
     out.innerHTML =
       '<div class="laudo">' +
         '<p class="eyebrow">Seu resultado</p>' +
-        '<h2>Dá para recuperar <em>' + brl(r.custoDevolve) + ' por ano</em>' + quem + '.</h2>' +
-        '<p class="sub">São <strong>' + hrs(r.devolve) + ' de equipe</strong> que hoje vão para conferir, consolidar e ' +
-          'formatar e passam a sobrar para decidir' +
-          (r.valorExterno > 0 ? ', mais <strong>' + brl(r.valorExterno) + '</strong> do que hoje é contratado fora e ' +
-            'o agente passa a fazer dentro de casa' : '') + '. ' +
-          (d.score ? 'Sua classificação atual, <strong>' + esc(d.score) + '</strong>, é o que esse esforço sustenta.' : '') +
-        '</p>' +
+        '<h2>' + (d.empresa ? esc(d.empresa) : 'A sua empresa') + ' pode recuperar <em>' +
+          brl(r.custoDevolve) + ' por ano</em>.</h2>' +
+        '<p class="sub">Hoje a área gasta <strong>' + hrs(r.total) + ' por ano</strong> em trabalho que segue regra: ' +
+          'buscar dado, consolidar, conferir e formatar. Os agentes assumem a maior parte disso.</p>' +
 
-        '<div class="tiles">' +
-          '<div class="tile"><span class="k">Hoje</span><span class="v">' +
-            Math.round(r.total).toLocaleString('pt-BR') + ' h</span>' +
-            '<span class="s">por ano em tarefas que seguem regra</span></div>' +
-          '<div class="tile"><span class="k">Recuperado</span><span class="v">' +
-            Math.round(r.devolve).toLocaleString('pt-BR') + ' h</span>' +
-            '<span class="s">' + Math.round(100 * r.devolve / (r.total || 1)) + '% do total</span></div>' +
-          '<div class="tile"><span class="k">Equipe</span><span class="v">' +
-            brl(r.valorInterno) + '</span><span class="s">de hora de time, a ' + brl(r.hora) + ' a hora</span></div>' +
-          (r.valorExterno > 0
-            ? '<div class="tile"><span class="k">Apoio externo</span><span class="v">' + brl(r.valorExterno) +
-              '</span><span class="s">parcela do que hoje é contratado fora</span></div>'
-            : '') +
+        '<div class="paineis">' +
+
+          '<div class="painel">' +
+            '<span class="k">Onde está o tempo</span>' +
+            '<div class="barra">' +
+              '<div class="t"><span class="n">Hoje</span><span class="q">' + hrs(r.total) + '</span></div>' +
+              '<div class="trilho"><i style="width:100%"></i></div>' +
+            '</div>' +
+            '<div class="barra">' +
+              '<div class="t"><span class="n">Com os agentes</span><span class="q on">' + hrs(r.restante) + '</span></div>' +
+              '<div class="trilho"><i class="on" style="width:' +
+                Math.max(3, Math.round(100 * r.restante / (r.total || 1))) + '%"></i></div>' +
+            '</div>' +
+            '<p class="rem">Voltam <b>' + hrs(r.devolve) + ' por ano</b> para o time. ' +
+              'É o mesmo que ganhar <b>' + tempoHumano(r.devolve) + '</b> de trabalho de uma pessoa.</p>' +
+          '</div>' +
+
+          '<div class="painel">' +
+            '<span class="k">Quanto isso vale</span>' +
+            '<div class="linhas">' +
+              '<div class="linha"><span class="n">Hora de equipe que volta<br>' +
+                '<span style="font-size:11.5px;color:var(--dim)">' + hrs(r.devolve) + ' a ' + brl(r.hora) + ' a hora</span>' +
+                '</span><span class="v">' + brl(r.valorInterno) + '</span></div>' +
+              (r.valorExterno > 0
+                ? '<div class="linha"><span class="n">Apoio externo que deixa de ser contratado<br>' +
+                  '<span style="font-size:11.5px;color:var(--dim)">parte do que hoje vai para consultoria</span>' +
+                  '</span><span class="v">' + brl(r.valorExterno) + '</span></div>'
+                : '') +
+              '<div class="linha total"><span class="n">Total por ano</span>' +
+                '<span class="v">' + brl(r.custoDevolve) + '</span></div>' +
+            '</div>' +
+          '</div>' +
+
         '</div>' +
+
+        (d.score ? '<p class="prem" style="margin:14px 0 0">Sua classificação atual, <b style="color:var(--fg)">' +
+          esc(d.score) + '</b>, é o que todo esse esforço sustenta hoje.</p>' : '') +
 
         '<h3>Por onde começar</h3>' +
         (rota.length
@@ -553,15 +620,25 @@ footer{color:var(--dim);font-size:11.5px;font-family:var(--mono);margin-top:40px
         '<p class="prem">Os apagados não fazem sentido no seu cenário. Ativar menos agentes custa menos.</p>' +
 
         '<h3>Como a conta foi feita</h3>' +
+        '<p class="prem" style="margin:0 0 10px"><b style="color:var(--fg)">O que veio de vocês.</b> ' +
+          'Unidades, fontes de dado, frameworks, entregas de relato, países, fornecedores e o jeito que o dado ' +
+          'chega. Nada disso foi estimado por nós: são as respostas desta página.</p>' +
+        '<p class="prem" style="margin:0 0 12px"><b style="color:var(--fg)">O que é parâmetro da HIPP.</b> ' +
+          'Os números abaixo são a nossa referência, calibrada em operações reais. No piloto eles são ' +
+          'substituídos pela medição de vocês.</p>' +
         '<ul class="prem">' +
           '<li>Coleta: ' + P.hUnidade + ' h por unidade operacional e ' + P.hFonte + ' h por fonte de dado, ao ano, ' +
             'com fator ' + r.mult.toFixed(2).replace('.', ',') + ' pelo jeito que o dado chega até vocês.</li>' +
           '<li>Relato: ' + P.hFw1 + ' h no primeiro framework, ' + P.hFwN + ' h em cada adicional, ' +
             P.hRelato + ' h por relatório ou questionário e ' + P.hJur + ' h por país além do primeiro.</li>' +
           '<li>Cadeia: ' + String(P.hVerif).replace('.', ',') + ' h por fornecedor verificado, sobre ' +
-            Math.round(r.baseVerif).toLocaleString('pt-BR') + ' fornecedores, ' + d.frequencia + ' vez(es) ao ano.</li>' +
-          '<li>Reduções de ' + (P.redColeta * 100) + '%, ' + (P.redRelato * 100) + '% e ' + (P.redCadeia * 100) +
-            '%, medidas em cliente real onde um processo de 704 h por ano passou para 176 h.</li>' +
+            (Math.round(r.baseVerif) === 1
+              ? '1 fornecedor'
+              : Math.round(r.baseVerif).toLocaleString('pt-BR') + ' fornecedores') + ', ' +
+            vezes(d.frequencia) + ' por ano.</li>' +
+          '<li>Reduções consideradas: ' + Math.round(P.redColeta * 100) + '% na coleta, ' +
+            Math.round(P.redRelato * 100) + '% no relato e ' + Math.round(P.redCadeia * 100) + '% na cadeia. É a faixa conservadora, usada de propósito. ' +
+            'Em cliente real, a produção de relatório caiu 75%, de 704 h por ano para 176 h.</li>' +
           (d.gastoExterno > 0
             ? '<li>Apoio externo: ' + (P.absorveExterno * 100) + '% do que hoje é contratado fora passa a ser feito ' +
               'pelo agente. O que exige julgamento humano continua sendo contratado.</li>'
@@ -665,34 +742,33 @@ footer{color:var(--dim);font-size:11.5px;font-family:var(--mono);margin-top:40px
 
   var DESTINO = 'https://script.google.com/macros/s/AKfycbzIIk7friJz_sZE75YMTPdEKFycNOT3dXJO622_TKwEO1ss6X7LOv1iQoHlGcfmzoBc/exec';
 
-  /* Manda para o Apps Script em segundo plano. O celular nunca navega
-     para o Google, então não tem app atravessando o caminho.
-     text/plain de propósito: é requisição simples, não dispara preflight. */
   function enviar(carga, aoFalhar){
     try {
-      fetch(DESTINO, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(carga)
-      }).catch(function(){ if (aoFalhar) aoFalhar(); });
+      fetch(DESTINO, { method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify(carga) }).catch(function(){ if (aoFalhar) aoFalhar(); });
     } catch (e) { if (aoFalhar) aoFalhar(); }
   }
 
   /* grava só a identificação, uma vez, assim que ela estiver completa */
-  var parcialEnviada = false;
+  var parcialEnviada = false, parcialAgendada = null;
   function enviarParcial(){
-    if (parcialEnviada) return;
+    if (parcialEnviada || parcialAgendada) return;
     var vazio = OBRIG.some(function(c){ return !document.getElementById(c.id).value.trim(); });
     if (vazio) return;
     var d = coletar();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) return;
     if (d.telefone.replace(/\D/g, '').length < 10) return;
-    parcialEnviada = true;
-    enviar({ id: SESSAO, parcial: true, criadoEm: new Date().toISOString(), respostas: d });
+    parcialAgendada = setTimeout(function(){
+      parcialAgendada = null;
+      if (parcialEnviada) return;
+      parcialEnviada = true;
+      enviar({ id: SESSAO, parcial: true, criadoEm: new Date().toISOString(), respostas: coletar() });
+    }, 10000);
   }
 
   function salvar(d, r, ags){
+    if (parcialAgendada) { clearTimeout(parcialAgendada); parcialAgendada = null; }
     parcialEnviada = true;
     enviar(pacote(d, r, ags), function(){ mostrarFalha(d, r, ags); });
   }
